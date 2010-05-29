@@ -62,7 +62,10 @@ class LDAPResult(object):
         """
         Returns a display value for this result based on the common name.
         """
-        return u"".join(self.cn)
+        if hasattr(self, "cn"):
+            return u"".join(self.cn)
+        else:
+            return self.dn
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.__unicode__())
