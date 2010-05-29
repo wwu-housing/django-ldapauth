@@ -117,6 +117,8 @@ class LDAP(object):
         results = self.search(query, base=user_dn, scope=ldap.SCOPE_BASE, attributes=attributes)
         result = results[0]
         tokenGroups = getattr(result, attributes[0])
+        tokenGroups = [convert_binary_sid_to_str(tokenGroup)
+                       for tokenGroup in tokenGroups]
         return tokenGroups
 
     def search(self, query, base=None, scope=None, attributes=None):
