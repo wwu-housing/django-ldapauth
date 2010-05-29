@@ -121,6 +121,17 @@ class LDAP(object):
                        for tokenGroup in tokenGroups]
         return tokenGroups
 
+    def get_token_group_dns_by_sid(self, token_groups):
+        member_of = []
+        attributes = ['distinquishedName']
+        for sid in token_groups:
+            query = "(objectSid=" + sid + ")"
+            results = self.search(query, attributes=attributes)
+            if len(results) > 0:
+                member_of.append(results[0].dn.lower())
+
+        return member_of
+
     def search(self, query, base=None, scope=None, attributes=None):
         """
         Performs a synchronous search through all subtrees for the given query.
