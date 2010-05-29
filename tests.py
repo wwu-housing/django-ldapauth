@@ -26,3 +26,9 @@ class LDAPTest(TestCase):
         username = "lohrb"
         person = self.ldap.get_person_by_username(username)
         self.assertEquals(username, person.sAMAccountName[0])
+
+    def test_get_token_groups_by_user(self):
+        username = "asadf"
+        person = self.ldap.get_person_by_username(username)
+        token_groups = self.ldap.get_token_groups_by_user(person.dn)
+        self.assertTrue(len(token_groups) > 0)
