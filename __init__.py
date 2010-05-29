@@ -83,7 +83,7 @@ class LDAP(object):
         >>> l = LDAP("wwu")
         """
         if scope is None:
-            self.scope = 2
+            self.scope = ldap.SCOPE_SUBTREE
         else:
             self.scope = scope
 
