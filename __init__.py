@@ -55,8 +55,9 @@ class LDAPResult(object):
     This class allows values to be accessed as instance attributes named after
     the keys.
     """
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
+    def __init__(self, result_tuple):
+        self.dn, rows = result_tuple
+        self.__dict__.update(**rows)
 
     def __unicode__(self):
         """
@@ -118,36 +119,38 @@ class LDAP(object):
         tokenGroups = result.get_attr_values(attr[0])
         return tokenGroups
 
-    def search(self, query, attributes=None):
+    def search(self, query, base=None, scope=None, attributes=None):
         """
         Performs a synchronous search through all subtrees for the given query.
 
         Result rows are loaded into LDAPResult objects so results can be
         accessed easily through object attributes.
         """
+        if base is None:
+            base = self.base
+
+        if scope is None:
+            scope = self.scope
+
         if attributes is None:
             attributes = ["cn"]
         self.bind()
-        r = self.ldap.search_s(self.base, self.scope, query, attributes)
+        results = self.ldap.search_s(base, scope, query, attributes)
         self.unbind()
 
-        results = []
-        for match, row in r:
-            results.append(LDAPResult(**row))
-
-        return results
+        return [LDAPResult(result_tuple) for result_tuple in results]
 
     def search_groups(self, query, attributes=None):
         query = "(&(objectClass=group)(cn=%s))" % query
-        return self.search(query, attributes)
+        return self.search(query, attributes=attributes)
 
     def search_people(self, query, attributes=None):
         query = "(&(objectClass=person)(cn=%s))" % query
-        return self.search(query, attributes)
+        return self.search(query, attributes=attributes)
 
     def get_person_by_username(self, username):
         query = "(&(objectClass=person)(sAMAccountName=%s))" % username
-        results = self.search(query, [])
+        results = self.search(query, attributes=[])
         if len(results) > 0:
             return results[0]
         else:
