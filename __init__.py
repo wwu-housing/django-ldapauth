@@ -105,7 +105,7 @@ class LDAP(object):
     def unbind(self):
         self.ldap.unbind()
 
-    def get_token_groups_by_user(self, user_base_dn):
+    def get_token_groups_by_user(self, user_dn):
         """
         Search on the base DN of the user to get the tokenGroups attribute.
 
@@ -114,9 +114,9 @@ class LDAP(object):
         """
         query = "(objectClass=*)"
         attributes = ["tokenGroups"]
-        results = self.ldap.search_s(user_base_dn, self.scope, query, attributes)
-        result = LDAPSearchResult(results[0])
-        tokenGroups = result.get_attr_values(attr[0])
+        results = self.search(query, base=user_dn, scope=ldap.SCOPE_BASE, attributes=attributes)
+        result = results[0]
+        tokenGroups = getattr(result, attributes[0])
         return tokenGroups
 
     def search(self, query, base=None, scope=None, attributes=None):
