@@ -134,6 +134,7 @@ class LDAP(object):
 
         if attributes is None:
             attributes = ["cn"]
+
         self.bind()
         results = self.ldap.search_s(base, scope, query, attributes)
         self.unbind()
