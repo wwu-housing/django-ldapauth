@@ -4,6 +4,11 @@ import ConfigParser
 import ldap
 import struct
 
+from django.core.cache import cache
+
+from wwu_housing.data import memoize
+
+
 def convert_binary_sid_to_str(sid):
     # Start building the string.
     sid_str = "S-"
@@ -71,6 +76,10 @@ class LDAPResult(object):
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.__unicode__())
+
+    @memoize
+    def groups(self):
+        return self._ldap.get_token_groups_by_dn(self.dn)
 
 
 class LDAP(object):
