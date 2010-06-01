@@ -7,7 +7,7 @@ from django.test import TestCase
 from wwu_housing.ldapauth import LDAP
 
 
-class LDAPTest(TestCase):
+class LDAPTestCase(TestCase):
     def setUp(self):
         self.ldap = LDAP("wwu")
 
