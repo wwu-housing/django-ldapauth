@@ -125,7 +125,12 @@ class LDAP(object):
         """
         query = "(objectClass=*)"
         attributes = ["tokenGroups"]
-        results = self.search(query, base=user_dn, scope=ldap.SCOPE_BASE, attributes=attributes)
+        results = self.search(
+            query,
+            base=dn,
+            scope=ldap.SCOPE_BASE,
+            attributes=attributes
+        )
         result = results[0]
         tokenGroups = getattr(result, attributes[0])
         tokenGroups = [convert_binary_sid_to_str(tokenGroup)
