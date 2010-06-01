@@ -117,7 +117,8 @@ class LDAP(object):
 
     def get_token_groups_by_dn(self, dn):
         """
-        Search on the base DN of the user to get the tokenGroups attribute.
+        Get a list of token group distinguished names for the given
+        distinguished name (DN).
 
         Token groups are binary ids for all groups a user belongs to in the AD
         tree.
