@@ -106,7 +106,7 @@ class LDAP(object):
     def unbind(self):
         self.ldap.unbind()
 
-    def get_token_groups_by_user(self, user_dn):
+    def get_token_groups_by_dn(self, dn):
         """
         Search on the base DN of the user to get the tokenGroups attribute.
 
