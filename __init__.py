@@ -55,9 +55,10 @@ class LDAPResult(object):
     This class allows values to be accessed as instance attributes named after
     the keys.
     """
-    def __init__(self, result_tuple):
-        self.dn, rows = result_tuple
-        self.__dict__.update(**rows)
+    def __init__(self, dn, ldap, **kwargs):
+        self.dn = dn
+        self._ldap = ldap
+        self.__dict__.update(**kwargs)
 
     def __unicode__(self):
         """
@@ -152,7 +153,7 @@ class LDAP(object):
         results = self.ldap.search_s(base, scope, query, attributes)
         self.unbind()
 
-        return [LDAPResult(result_tuple) for result_tuple in results]
+        return [LDAPResult(dn, ldap=self, **row) for dn, row in results]
 
     def search_groups(self, query, attributes=None):
         query = "(&(objectClass=group)(cn=%s))" % query
