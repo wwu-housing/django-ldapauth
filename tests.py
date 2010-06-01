@@ -32,3 +32,17 @@ class LDAPTestCase(TestCase):
         person = self.ldap.get_person_by_username(username)
         token_groups = self.ldap.get_token_groups_by_dn(person.dn)
         self.assertTrue(len(token_groups) > 0)
+        self.assertTrue(token_groups[1] is not None, token_groups)
+        self.assertTrue(token_groups[1].startswith("grp"), token_groups)
+
+
+class LDAPResultTestCase(TestCase):
+    def setUp(self):
+        self.ldap = LDAP("wwu")
+
+    def test_get_token_groups_by_user(self):
+        username = "asadf"
+        person = self.ldap.get_person_by_username(username)
+        self.assertTrue(len(person.groups) > 0)
+        self.assertTrue(person.groups[1] is not None, person.groups)
+        self.assertTrue(person.groups[1].startswith("grp"), person.groups)
