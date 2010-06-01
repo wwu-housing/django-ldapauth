@@ -132,21 +132,47 @@ class LDAP(object):
             attributes=attributes
         )
         result = results[0]
-        tokenGroups = getattr(result, attributes[0])
-        tokenGroups = [convert_binary_sid_to_str(tokenGroup)
-                       for tokenGroup in tokenGroups]
-        return tokenGroups
+        token_group_sids = getattr(result, attributes[0])
 
-    def get_token_group_dns_by_sid(self, token_groups):
-        member_of = []
-        attributes = ['distinquishedName']
-        for sid in token_groups:
-            query = "(objectSid=" + sid + ")"
+        # Get the distinguished name (DN) for each token group SID filtering out
+        # any SIDs that don't have a DN (i.e., group name is None).
+        token_groups = []
+        for token_group_sid in token_group_sids:
+            token_group = self.get_token_group_name_by_sid(token_group_sid)
+            if token_group is not None:
+                token_groups.append(token_group)
+
+        return token_groups
+
+    def get_token_group_name_by_sid(self, sid):
+        """
+        Get the name for a token group based on its SID.
+
+        SID/distinguished name pairs are cached because they change
+        infrequently.
+        """
+        sid_string = convert_binary_sid_to_str(sid)
+        name = cache.get(sid_string)
+
+        if not name:
+            # SIDs are stored in LDAP as binary strings. Each SID needs to be
+            # converted from binary to a string representation before querying
+            # LDAP for the token group distinguished name.
+            attributes = []
+            query = "(objectSid=%s)" % sid_string
             results = self.search(query, attributes=attributes)
             if len(results) > 0:
-                member_of.append(results[0].dn.lower())
+                # Use the token group's common name (CN) if it has
+                # one. Otherwise, fall back on the distinguished name (DN).
+                if results[0].cn:
+                    name = " ".join(results[0].cn)
+                else:
+                    name = results[0].dn
 
-        return member_of
+                # Cache SID/name pairs for one day.
+                cache.set(sid_string, name, 60 * 60 * 24)
+
+        return name
 
     def search(self, query, base=None, scope=None, attributes=None):
         """
