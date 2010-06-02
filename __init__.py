@@ -169,6 +169,9 @@ class LDAP(object):
                 else:
                     name = results[0].dn
 
+                # Lowercase group names because they are inconsistently cased.
+                name = name.lower()
+
                 # Cache SID/name pairs for one day.
                 cache.set(sid_string, name, 60 * 60 * 24)
 
