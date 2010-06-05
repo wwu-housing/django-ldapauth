@@ -1,3 +1,7 @@
+"""
+Custom authorization backend for Django. Does not handle authentication.
+"""
+
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Permission
 
@@ -10,6 +14,11 @@ class LDAPBackend(ModelBackend):
     membership.
     """
     def get_group_permissions(self, user):
+        """
+        Updates the set of locally defined group permissions with all
+        permissions available to the given user through their LDAP group
+        membership.
+        """
         # Get locally stored group permissions.
         permissions_set = super(LDAPBackend, self).get_group_permissions(user)
 
