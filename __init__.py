@@ -7,6 +7,7 @@ import struct
 from django.core.cache import cache
 
 from wwu_housing.data import memoize
+from models import LdapGroup
 
 
 def convert_binary_sid_to_str(sid):
@@ -132,13 +133,20 @@ class LDAP(object):
             attributes=attributes
         )
         result = results[0]
-        token_group_sids = getattr(result, attributes[0])
+        token_group_sids = [convert_binary_sid_to_str(sid)
+                            for sid in getattr(result, attributes[0])]
+
+        # Lookup previously defined security identifiers (SIDs).
+        groups = LdapGroup.objects.filter(sid__in=token_group_sids)
+        token_groups = [group.name for group in groups]
+
+        # Filter SIDs that haven't been defined.
+        new_sids = set(token_group_sids) - set([group.sid for group in groups])
 
         # Get the distinguished name (DN) for each token group SID filtering out
         # any SIDs that don't have a DN (i.e., group name is None).
-        token_groups = []
-        for token_group_sid in token_group_sids:
-            token_group = self.get_token_group_name_by_sid(token_group_sid)
+        for sid in new_sids:
+            token_group = self.get_token_group_name_by_sid(sid)
             if token_group is not None:
                 token_groups.append(token_group)
 
@@ -151,31 +159,29 @@ class LDAP(object):
         SID/distinguished name pairs are cached because they change
         infrequently.
         """
-        sid_string = convert_binary_sid_to_str(sid)
-        name = cache.get(sid_string)
+        # SIDs are stored in LDAP as binary strings. Each SID needs to be
+        # converted from binary to a string representation before querying
+        # LDAP for the token group distinguished name.
+        attributes = []
+        query = "(objectSid=%s)" % sid
+        results = self.search(query, attributes=attributes)
+        if len(results) > 0:
+            # Use the token group's common name (CN) if it has
+            # one. Otherwise, fall back on the distinguished name (DN).
+            if results[0].cn:
+                name = " ".join(results[0].cn)
+            else:
+                name = results[0].dn
 
-        if not name:
-            # SIDs are stored in LDAP as binary strings. Each SID needs to be
-            # converted from binary to a string representation before querying
-            # LDAP for the token group distinguished name.
-            attributes = []
-            query = "(objectSid=%s)" % sid_string
-            results = self.search(query, attributes=attributes)
-            if len(results) > 0:
-                # Use the token group's common name (CN) if it has
-                # one. Otherwise, fall back on the distinguished name (DN).
-                if results[0].cn:
-                    name = " ".join(results[0].cn)
-                else:
-                    name = results[0].dn
+            # Lowercase group names because they are inconsistently cased.
+            name = name.lower()
 
-                # Lowercase group names because they are inconsistently cased.
-                name = name.lower()
+            # Store the SID/name pair.
+            group = LdapGroup.objects.create(sid=sid, name=name)
 
-                # Cache SID/name pairs for one day.
-                cache.set(sid_string, name, 60 * 60 * 24)
-
-        return name
+            return name
+        else:
+            return None
 
     def search(self, query, base=None, scope=None, attributes=None):
         """
