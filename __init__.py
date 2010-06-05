@@ -138,6 +138,9 @@ class LDAP(object):
             attributes=attributes
         )
         result = results[0]
+
+        # Convert binary SIDs to strings. All references to SIDs from this point
+        # on are references to the string representation of those SIDs.
         token_group_sids = [convert_binary_sid_to_str(sid)
                             for sid in getattr(result, attributes[0])]
 
