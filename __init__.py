@@ -2,12 +2,15 @@ import binascii
 import ctypes
 import ConfigParser
 import ldap
+import logging
 import struct
 
 from django.core.cache import cache
 
 from wwu_housing.data import memoize
 from models import LdapGroup
+
+logger = logging.getLogger(__name__)
 
 
 def convert_binary_sid_to_str(sid):
@@ -124,6 +127,8 @@ class LDAP(object):
         Token groups are binary ids for all groups a user belongs to in the AD
         tree.
         """
+        logging.debug("Getting token groups for %s" % dn)
+
         query = "(objectClass=*)"
         attributes = ["tokenGroups"]
         results = self.search(
@@ -142,6 +147,7 @@ class LDAP(object):
 
         # Filter SIDs that haven't been defined.
         new_sids = set(token_group_sids) - set([group.sid for group in groups])
+        logging.debug("Looking up %s new groups" % len(new_sids))
 
         # Get the distinguished name (DN) for each token group SID filtering out
         # any SIDs that don't have a DN (i.e., group name is None).
