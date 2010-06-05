@@ -4,6 +4,7 @@ Custom authorization backend for Django. Does not handle authentication.
 
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Permission
+from django.core.cache import cache
 
 from wwu_housing.ldapauth import LDAP
 
@@ -22,9 +23,14 @@ class LDAPBackend(ModelBackend):
         # Get locally stored group permissions.
         permissions_set = super(LDAPBackend, self).get_group_permissions(user)
 
-        ldap = LDAP("wwu")
-        ldap_person = ldap.get_person_by_username(user.username)
-        groups = ldap_person.groups
+        key = "group_permissions_%s" % user.username
+        groups = cache.get(key)
+
+        if not groups:
+            ldap = LDAP("wwu")
+            ldap_person = ldap.get_person_by_username(user.username)
+            groups = ldap_person.groups
+            cache.set(key, groups)
 
         # The traditional ModelBackend fetches all Permission instances
         # associated with groups for which the current user is a member. This
