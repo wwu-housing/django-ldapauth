@@ -1,11 +1,13 @@
+"""
+LDAP utilities used primarily for querying an LDAP server and working with the
+results.
+"""
 import binascii
 import ctypes
 import ConfigParser
 import ldap
 import logging
 import struct
-
-from django.core.cache import cache
 
 from wwu_housing.data import memoize
 from models import LdapGroup
@@ -14,6 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 def convert_binary_sid_to_str(sid):
+    """
+    Converts the binary data structure of an Active Directory (AD) security
+    identifier (SID) to a human-readable string.
+    """
     # Start building the string.
     sid_str = ["S-"]
 
@@ -28,13 +34,13 @@ def convert_binary_sid_to_str(sid):
     hex_data = ctypes.create_string_buffer(substr.decode('hex'), 2)
     sid_str.append(str(struct.unpack('H', hex_data)[0])) # Two bytes
     sid_str.append("-")
-    byte_c +=2
+    byte_c += 2
 
     # hex_str[2:4], second byte - number of dashes
     substr = hex_str[byte_c: byte_c + 2]
     hex_data = ctypes.create_string_buffer(substr.decode('hex'), 2)
     count = struct.unpack('H', hex_data)[0] # ditto, only two bytes
-    byte_c +=2
+    byte_c += 2
 
     # hex_str[4:16], next six bytes - SECURITY_NT_AUTHORITY
     # This is freakin' ugly, a 6 byte string in big-endian format.
@@ -67,13 +73,14 @@ class LDAPResult(object):
     def __init__(self, dn, ldap, **kwargs):
         self.dn = dn
         self._ldap = ldap
+        self.cn = kwargs.pop("cn", None)
         self.__dict__.update(**kwargs)
 
     def __unicode__(self):
         """
         Returns a display value for this result based on the common name.
         """
-        if hasattr(self, "cn"):
+        if self.cn is not None:
             return u"".join(self.cn)
         else:
             return self.dn
@@ -83,10 +90,17 @@ class LDAPResult(object):
 
     @memoize
     def groups(self):
+        """
+        Returns all groups associated with this LDAP entity's distinguished
+        name.
+        """
         return self._ldap.get_token_groups_by_dn(self.dn)
 
 
 class LDAP(object):
+    """
+    Provides access to query an LDAP server.
+    """
     conf_file = "/usr/local/etc/wwu_ldap.conf"
 
     def __init__(self, conf_section, scope=None):
@@ -111,12 +125,18 @@ class LDAP(object):
         self.dn = config.get(conf_section, "dn")
         self.bindpw = config.get(conf_section, "bindpw")
         self.base = config.get(conf_section, "base")
+        self.ldap = ldap.initialize(self.server)
 
     def bind(self):
-        self.ldap = ldap.initialize(self.server)
+        """
+        Initializes an LDAP instance and binds to the predefined server.
+        """
         self.ldap.simple_bind(self.dn, self.bindpw)
 
     def unbind(self):
+        """
+        Unbinds the current LDAP instance.
+        """
         self.ldap.unbind()
 
     def get_token_groups_by_dn(self, dn):
@@ -127,7 +147,7 @@ class LDAP(object):
         Token groups are binary ids for all groups a user belongs to in the AD
         tree.
         """
-        logging.debug("Getting token groups for %s" % dn)
+        logging.debug("Getting token groups for %s", dn)
 
         query = "(objectClass=*)"
         attributes = ["tokenGroups"]
@@ -147,11 +167,11 @@ class LDAP(object):
         # Lookup previously defined security identifiers (SIDs).
         groups = LdapGroup.objects.filter(sid__in=token_group_sids)
         token_groups = [group.name for group in groups if group.name]
-        logging.debug("Found %s groups in the database" % groups.count())
+        logging.debug("Found %s groups in the database", groups.count())
 
         # Filter SIDs that haven't been defined.
         new_sids = set(token_group_sids) - set([group.sid for group in groups])
-        logging.debug("Looking up %s new groups" % len(new_sids))
+        logging.debug("Looking up %s new groups", len(new_sids))
 
         # Get the distinguished name (DN) for each token group SID filtering out
         # any SIDs that don't have a DN (i.e., group name is None).
@@ -191,7 +211,7 @@ class LDAP(object):
 
         # Store the SID/name pair even if the name is empty to avoid an LDAP
         # query.
-        group = LdapGroup.objects.create(sid=sid, name=name)
+        LdapGroup.objects.create(sid=sid, name=name)
 
         return name
 
@@ -218,14 +238,26 @@ class LDAP(object):
         return [LDAPResult(dn, ldap=self, **row) for dn, row in results]
 
     def search_groups(self, query, attributes=None):
+        """
+        Searches for groups that match the given query. If ``attributes`` is
+        specified, only the values in that list are returned in the LDAPResult.
+        """
         query = "(&(objectClass=group)(cn=%s))" % query
         return self.search(query, attributes=attributes)
 
     def search_people(self, query, attributes=None):
+        """
+        Searches for users that match the given query. The query usually
+        includes a user's first and last name.
+        """
         query = "(&(objectClass=person)(cn=%s))" % query
         return self.search(query, attributes=attributes)
 
     def get_person_by_username(self, username):
+        """
+        Searches for users by the given unique username. Thus, if there are any
+        results, there will only be one.
+        """
         query = "(&(objectClass=person)(sAMAccountName=%s))" % username
         results = self.search(query, attributes=[])
         if len(results) > 0:
