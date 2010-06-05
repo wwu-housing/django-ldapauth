@@ -125,12 +125,12 @@ class LDAP(object):
         self.dn = config.get(conf_section, "dn")
         self.bindpw = config.get(conf_section, "bindpw")
         self.base = config.get(conf_section, "base")
-        self.ldap = ldap.initialize(self.server)
 
     def bind(self):
         """
         Initializes an LDAP instance and binds to the predefined server.
         """
+        self.ldap = ldap.initialize(self.server)
         self.ldap.simple_bind(self.dn, self.bindpw)
 
     def unbind(self):
