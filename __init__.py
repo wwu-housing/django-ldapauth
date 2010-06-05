@@ -146,7 +146,8 @@ class LDAP(object):
 
         # Lookup previously defined security identifiers (SIDs).
         groups = LdapGroup.objects.filter(sid__in=token_group_sids)
-        token_groups = [group.name for group in groups]
+        token_groups = [group.name for group in groups if group.name]
+        logging.debug("Found %s groups in the database" % groups.count())
 
         # Filter SIDs that haven't been defined.
         new_sids = set(token_group_sids) - set([group.sid for group in groups])
