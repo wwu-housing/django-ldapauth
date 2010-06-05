@@ -157,7 +157,8 @@ class LDAP(object):
         # any SIDs that don't have a DN (i.e., group name is None).
         for sid in new_sids:
             token_group = self.get_token_group_name_by_sid(sid)
-            if token_group is not None:
+            logger.debug("Found new group: %s" % token_group)
+            if token_group != "":
                 token_groups.append(token_group)
 
         return token_groups
@@ -185,13 +186,14 @@ class LDAP(object):
 
             # Lowercase group names because they are inconsistently cased.
             name = name.lower()
-
-            # Store the SID/name pair.
-            group = LdapGroup.objects.create(sid=sid, name=name)
-
-            return name
         else:
-            return None
+            name = ""
+
+        # Store the SID/name pair even if the name is empty to avoid an LDAP
+        # query.
+        group = LdapGroup.objects.create(sid=sid, name=name)
+
+        return name
 
     def search(self, query, base=None, scope=None, attributes=None):
         """
