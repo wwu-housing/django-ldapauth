@@ -11,7 +11,7 @@ from wwu_housing.data import memoize
 
 def convert_binary_sid_to_str(sid):
     # Start building the string.
-    sid_str = "S-"
+    sid_str = ["S-"]
 
     # Convert the binary string to hex. Remember the hex string represents
     # each byte of data with 2 characters, so the string is twice as long as
@@ -22,8 +22,8 @@ def convert_binary_sid_to_str(sid):
     # hex_str[0:2], first byte - revision
     substr = hex_str[byte_c:byte_c + 2]
     hex_data = ctypes.create_string_buffer(substr.decode('hex'), 2)
-    sid_str += str(struct.unpack('H', hex_data)[0]) # Two bytes
-    sid_str += "-"
+    sid_str.append(str(struct.unpack('H', hex_data)[0])) # Two bytes
+    sid_str.append("-")
     byte_c +=2
 
     # hex_str[2:4], second byte - number of dashes
@@ -37,19 +37,19 @@ def convert_binary_sid_to_str(sid):
     # Which is, of course, different than the rest of the SID.
     substr = hex_str[byte_c:byte_c + (2*6)] # Two chars/byte, 6 bytes
     hex_data = ctypes.create_string_buffer(substr.decode('hex'), 6)
-    sid_str += str(struct.unpack('>IH', hex_data)[1]) # Big endian
+    sid_str.append(str(struct.unpack('>IH', hex_data)[1])) # Big endian
     byte_c += (2*6)
 
     # hex_str[16: the end of the string, based on the count]
     # Ok, now things are somewhat sane, get the rest of the SID.
     for i in range(0, count):
-        sid_str += '-'
+        sid_str.append('-')
         substr = hex_str[byte_c:byte_c + (2*4)] #two chars/byte, 4 bytes
         hex_data = ctypes.create_string_buffer(substr.decode('hex'), 4)
-        sid_str += str(struct.unpack('<I', hex_data)[0]) # Little endian
+        sid_str.append(str(struct.unpack('<I', hex_data)[0])) # Little endian
         byte_c += (2*4)
 
-    return sid_str
+    return "".join(sid_str)
 
 
 class LDAPResult(object):
