@@ -9,7 +9,6 @@ import ldap
 import logging
 import struct
 
-from wwu_housing.data import memoize
 from models import LdapGroup
 
 logger = logging.getLogger(__name__)
@@ -88,7 +87,6 @@ class LDAPResult(object):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.__unicode__())
 
-    @memoize
     def groups(self):
         """
         Returns all groups associated with this LDAP entity's distinguished
