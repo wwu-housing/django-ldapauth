@@ -16,7 +16,7 @@ def django_user_set_for_ldap_group(group):
         group_name = group.name
     else:
         raise TypeError("""\
-The `group` argument must be either a string thatis the name of a group, or a
+The `group` argument must be either a string that is the name of a group, or a
 Django Group model instance.\
 """)
 
