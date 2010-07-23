@@ -87,12 +87,15 @@ class LDAPResult(object):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.__unicode__())
 
+    @property
     def groups(self):
         """
         Returns all groups associated with this LDAP entity's distinguished
         name.
         """
-        return self._ldap.get_token_groups_by_dn(self.dn)
+        if not hasattr(self, "_groups"):
+            self._groups = self._ldap.get_token_groups_by_dn(self.dn)
+        return self._groups
 
 
 class LDAP(object):
