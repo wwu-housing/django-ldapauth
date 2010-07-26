@@ -17,8 +17,8 @@ def django_user_set_for_ldap_group(group):
     else:
         raise TypeError("""\
 The `group` argument must be either a string that is the name of a group, or a
-Django Group model instance.\
-""")
+Django Group model instance. Found: %s\
+""" % type(group))
 
     cn_re = re.compile(r'CN=(.*?),')
     def get_cn(member):
