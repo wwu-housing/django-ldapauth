@@ -1,0 +1,58 @@
+[
+    {
+        "pk": 60, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "grp.housing.roles.administrative-assistant", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 61, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "grp.housing.roles.assistant-resident-director", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 77, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "grp.housing.roles.central-office", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 62, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "grp.housing.roles.desk-attendant", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 65, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "grp.housing.roles.manager", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 63, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "grp.housing.roles.resident-advisor", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 64, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "grp.housing.roles.resident-director", 
+            "permissions": []
+        }
+    }
+]
