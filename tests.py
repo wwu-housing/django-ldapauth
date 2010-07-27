@@ -1,10 +1,11 @@
 """
 Unit tests for LDAP authorization and authentication.
 """
-
+from django.contrib.auth.models import User
 from django.test import TestCase
 
 from wwu_housing.ldapauth import LDAP
+from utils import django_user_set_for_ldap_group, get_users_by_distinguished_name
 
 
 class LDAPTestCase(TestCase):
@@ -46,3 +47,46 @@ class LDAPResultTestCase(TestCase):
         self.assertTrue(len(person.groups) > 0)
         self.assertTrue(person.groups[1] is not None, person.groups)
         self.assertTrue(person.groups[1].startswith("grp"), person.groups)
+
+
+class UtilsTestCase(TestCase):
+    """
+    Tests for LDAP utils.
+    """
+    fixtures = ["django_users_staff.json"]
+
+    def test_get_users_by_distinguished_name(self):
+        user = User.objects.create_user(
+            username="test0r",
+            password="!",
+            email="test0r@test0r.com"
+        )
+        user.first_name = "Testy"
+        user.last_name = "McTestorson"
+        user.save()
+
+        self.assertEquals(
+            get_users_by_distinguished_name(["CN=test0r,OU=wwu"])[0],
+            user
+        )
+        self.assertEquals(
+            get_users_by_distinguished_name(["CN=Testy McTestorson,OU=wwu"])[0],
+            user
+        )
+        self.assertEquals(
+            get_users_by_distinguished_name(["CN=fakeuser,OU=wwu"]).count(),
+            User.objects.none().count()
+        )
+
+    def test_django_user_set_for_ldap_group(self):
+        # Test a group known to have users.
+        user_set = django_user_set_for_ldap_group("grp.housing.roles.resident-director")
+        self.assertTrue(len(user_set) > 0)
+        self.assertTrue(isinstance(user_set[0], User))
+
+        # Test a fake group.
+        self.assertRaises(
+            IndexError,
+            django_user_set_for_ldap_group,
+            "grp.housing.roles.fakerole"
+        )
