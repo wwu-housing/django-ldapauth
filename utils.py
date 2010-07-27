@@ -22,6 +22,7 @@ def get_users_by_distinguished_name(distinguished_names):
     Takes a list of LDAP distinguished names (DNs) and returns a Django User
     queryset for all of those group members.
     """
+    # TODO: create Django instances for members who don't have one.
     members = map(get_common_name, distinguished_names)
     full_names = set([m for m in members if len(m.split(" ")) == 2])
     user_names = set(members).difference(full_names)
@@ -57,10 +58,14 @@ The `group` argument must be either a string that is the name of a group, or a
 Django Group model instance. Found: %s\
 """ % type(group))
 
-    return get_users_by_distinguished_name(
-        LDAP("wwu").search_groups(
-            group_name,
-            ["member"]
-        )[0].member
-    )
+    group = LDAP("wwu").search_groups(
+        group_name,
+        ["member"]
+    )[0]
+
+    # Attribute "member" won't exist if there are no users in the group.
+    if hasattr(group, "member"):
+        return get_users_by_distinguished_name(group.member)
+    else:
+        return User.objects.none()
 
