@@ -22,17 +22,24 @@ class LDAPBackend(ModelBackend):
         permissions available to the given user through their LDAP group
         membership.
         """
-        try:
-            # Get locally stored group permissions.
-            permissions_set = super(LDAPBackend, self).get_group_permissions(user)
+        # Get locally stored group permissions.
+        permissions_set = super(LDAPBackend, self).get_group_permissions(user)
 
+        try:
             key = "group_permissions_%s" % user.username
             groups = cache.get(key)
 
-            if not groups:
+            # Explicitly test for None because the cache may have had a "hit"
+            # for the given key and returned a value that would evaluate to
+            # False (e.g., [] or "").
+            if groups is None:
                 ldap = LDAP("wwu")
                 ldap_person = ldap.get_person_by_username(user.username)
-                groups = ldap_person.groups
+
+                # Try to get the groups attribute from the ldap_person. If
+                # ldap_person is None or doesn't have a groups attribute, the
+                # groups value is just an empty list.
+                groups = getattr(ldap_person, "groups", [])
                 cache.set(key, groups)
 
             # The traditional ModelBackend fetches all Permission instances
@@ -47,8 +54,7 @@ class LDAPBackend(ModelBackend):
                     .order_by()
                 permissions_set.update(set(["%s.%s" % (ct, name)
                                             for ct, name in permissions]))
-
-            return permissions_set
         except OPERATIONS_ERROR, e:
             mail_admins("LDAP Operations Error", "%s" % str(e))
-            return super(LDAPBackend, self).get_group_permissions(user)
+
+        return permissions_set
