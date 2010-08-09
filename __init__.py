@@ -2,11 +2,13 @@
 LDAP utilities used primarily for querying an LDAP server and working with the
 results.
 """
+from __future__ import with_statement
 import binascii
 import ctypes
 import ConfigParser
 import ldap
 import logging
+import simplejson
 import struct
 
 from models import LdapGroup
@@ -102,7 +104,7 @@ class LDAP(object):
     """
     Provides access to query an LDAP server.
     """
-    conf_file = "/usr/local/etc/wwu_ldap.conf"
+    conf_file = "/usr/local/etc/wwu_ldap.json"
 
     def __init__(self, conf_section, scope=None):
         """
@@ -120,12 +122,13 @@ class LDAP(object):
         else:
             self.scope = scope
 
-        config = ConfigParser.SafeConfigParser()
-        config.read(self.conf_file)
-        self.server = config.get(conf_section, "server")
-        self.dn = config.get(conf_section, "dn")
-        self.bindpw = config.get(conf_section, "bindpw")
-        self.base = config.get(conf_section, "base")
+        with open(self.conf_file, "r") as fh:
+            config = simplejson.load(fh)
+            config = config[conf_section]
+            self.server = config.get("server")
+            self.dn = config.get("dn")
+            self.bindpw = config.get("bindpw")
+            self.base = config.get("base")
 
     def bind(self):
         """
