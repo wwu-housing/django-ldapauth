@@ -215,7 +215,7 @@ class LDAP(object):
 
         # Store the SID/name pair even if the name is empty to avoid an LDAP
         # query.
-        LdapGroup.objects.create(sid=sid, name=name)
+        LdapGroup.objects.get_or_create(sid=sid, name=name)
 
         return name
 
