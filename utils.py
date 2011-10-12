@@ -1,3 +1,10 @@
+"""
+TODO
+====
+
+* django_user_set_for_ldap_group doesn't return users from a group within a group
+
+"""
 import re
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
