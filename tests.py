@@ -80,7 +80,7 @@ class UtilsTestCase(TestCase):
 
     def test_django_user_set_for_ldap_group(self):
         # Test a group known to have users.
-        user_set = django_user_set_for_ldap_group("grp.housing.roles.resident-director")
+        user_set = django_user_set_for_ldap_group("grp.housing.roles.residence-life.resident-director")
         self.assertTrue(len(user_set) > 0)
         self.assertTrue(isinstance(user_set[0], User))
 

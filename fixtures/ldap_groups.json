@@ -1,57 +1,57 @@
 [
     {
-        "pk": 60, 
-        "model": "auth.group", 
+        "pk": 60,
+        "model": "auth.group",
         "fields": {
-            "name": "grp.housing.roles.administrative-assistant", 
+            "name": "grp.housing.roles.residence-life.administrative-assistant",
             "permissions": []
         }
-    }, 
+    },
     {
-        "pk": 61, 
-        "model": "auth.group", 
+        "pk": 65,
+        "model": "auth.group",
         "fields": {
-            "name": "grp.housing.roles.assistant-resident-director", 
+            "name": "grp.housing.roles.residence-life.assistant-director",
             "permissions": []
         }
-    }, 
+    },
     {
-        "pk": 77, 
-        "model": "auth.group", 
+        "pk": 61,
+        "model": "auth.group",
         "fields": {
-            "name": "grp.housing.roles.central-office", 
+            "name": "grp.housing.roles.residence-life.assistant-resident-director",
             "permissions": []
         }
-    }, 
+    },
     {
-        "pk": 62, 
-        "model": "auth.group", 
+        "pk": 77,
+        "model": "auth.group",
         "fields": {
-            "name": "grp.housing.roles.desk-attendant", 
+            "name": "grp.housing.roles.residence-life.central-office",
             "permissions": []
         }
-    }, 
+    },
     {
-        "pk": 65, 
-        "model": "auth.group", 
+        "pk": 62,
+        "model": "auth.group",
         "fields": {
-            "name": "grp.housing.roles.manager", 
+            "name": "grp.housing.roles.residence-life.desk-attendant",
             "permissions": []
         }
-    }, 
+    },
     {
-        "pk": 63, 
-        "model": "auth.group", 
+        "pk": 63,
+        "model": "auth.group",
         "fields": {
-            "name": "grp.housing.roles.resident-advisor", 
+            "name": "grp.housing.roles.residence-life.resident-advisor",
             "permissions": []
         }
-    }, 
+    },
     {
-        "pk": 64, 
-        "model": "auth.group", 
+        "pk": 64,
+        "model": "auth.group",
         "fields": {
-            "name": "grp.housing.roles.resident-director", 
+            "name": "grp.housing.roles.residence-life.resident-director",
             "permissions": []
         }
     }
