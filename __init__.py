@@ -8,8 +8,9 @@ import ctypes
 import ConfigParser
 import ldap
 import logging
-import simplejson
 import struct
+
+from django.conf import settings
 
 from models import LdapGroup
 
@@ -104,7 +105,6 @@ class LDAP(object):
     """
     Provides access to query an LDAP server.
     """
-    conf_file = "/usr/local/etc/wwu_ldap.json"
 
     def __init__(self, conf_section, scope=None):
         """
@@ -117,18 +117,22 @@ class LDAP(object):
         Example usage for an LDAP configuration file with a "wwu" section:
         >>> l = LDAP("wwu")
         """
+        if not hasattr(settings, "LDAP_SOURCES"):
+            raise Exception("Please define LDAP_SOURCES in your settings")
+
         if scope is None:
             self.scope = ldap.SCOPE_SUBTREE
         else:
             self.scope = scope
 
-        with open(self.conf_file, "r") as fh:
-            config = simplejson.load(fh)
-            config = config[conf_section]
+        if settings.LDAP_SOURCES.has_key(conf_section):
+            config = settings.LDAP_SOURCES[conf_section]
             self.server = config.get("server")
             self.dn = config.get("dn")
             self.bindpw = config.get("bindpw")
             self.base = config.get("base")
+        else:
+            raise Exception("LDAP configuration not found for %s" % conf_section)
 
     def bind(self):
         """
