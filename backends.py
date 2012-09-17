@@ -43,10 +43,10 @@ class LDAPBackend(ModelBackend):
                 cache.set(key, groups)
 
             # The traditional ModelBackend fetches all Permission instances
-            # associated with groups for which the current user is a member. This
-            # backend doesn't rely on local user/group relationships so it queries
-            # Permissions directly by group name instead of by group__user foreign
-            # key relationship.
+            # associated with groups for which the current user is a member.
+            # This backend doesn't rely on local user/group relationships so it
+            # queries Permissions directly by group name instead of by
+            # group__user foreign key relationship.
             if len(groups) > 0:
                 permissions = Permission.objects \
                     .filter(group__name__in=groups) \
