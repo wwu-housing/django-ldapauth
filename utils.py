@@ -66,3 +66,11 @@ Django Group model instance. Found: %s\
     return User.objects.filter(username__in=usernames)
 
 
+def is_member(user, group_list=[]):
+    person = LDAP("wwu").get_person_by_username(user)
+    return bool(set(group_list).intersection(set(person.groups)))
+
+
+def get_user_groups(user):
+    person = LDAP("wwu").get_person_by_username(user)
+    return getattr(person, "groups", [])
