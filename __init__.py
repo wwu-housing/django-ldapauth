@@ -2,10 +2,8 @@
 LDAP utilities used primarily for querying an LDAP server and working with the
 results.
 """
-from __future__ import with_statement
 import binascii
 import ctypes
-import ConfigParser
 import ldap
 import logging
 import struct
@@ -272,6 +270,55 @@ class LDAP(object):
             return results[0]
         else:
             return None
+
+    def get_group_members(self, group):
+        """
+        Gets all group members, including members who are indirect members, i.e
+        recursively.  It is an iterative depth first search of a given group
+        and all sub-objects of that group. iddfs was chosen becuase it less
+        memory intensive than a breadth first search while still offering the
+        same completeness and is simpler, in my mind, to understand than a true
+        depth first search.
+        """
+
+        if not isinstance(group, basestring):
+            raise TypeError
+
+        user_list = []
+        visited_objects = []
+
+        result = self.search_groups(group, attributes=['member'])[0]
+        visited_objects.append(result.dn)
+
+        for obj in result.member:
+            user_list.extend(self.visit_object(obj, visited_objects))
+        return user_list
+
+    def visit_object(self, obj, visited_objects):
+        """
+        The second half of the iddfs that does the iteration and recursion on
+        the child members of the group being searched.
+        """
+
+        if not isinstance(visited_objects, list):
+            raise TypeError
+
+        user_list = []
+        if obj not in visited_objects:
+            query = "(objectClass=*)"
+            result = self.search(query,
+                                 base=obj,
+                                 scope=ldap.SCOPE_BASE,
+                                 attributes=[])[0]
+
+            if 'person' in result.objectClass:
+                user_list.extend(result.sAMAccountName)
+            elif hasattr(result, 'member'):
+                for child_obj in result.member:
+                    user_list.extend(self.visit_object(child_obj, visited_objects))
+
+            visited_objects.append(result.dn)
+        return user_list
 
 
 if __name__ == "__main__":
