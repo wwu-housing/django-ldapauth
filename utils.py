@@ -1,9 +1,5 @@
 """
-TODO
-====
-
-* django_user_set_for_ldap_group doesn't return users from a group within a group
-
+ldapauth utility functions
 """
 import re
 from django.contrib.auth.models import Group, User
@@ -65,14 +61,8 @@ The `group` argument must be either a string that is the name of a group, or a
 Django Group model instance. Found: %s\
 """ % type(group))
 
-    group = LDAP("wwu").search_groups(
-        group_name,
-        ["member"]
-    )[0]
+    usernames = LDAP("wwu").get_group_members(group_name)
 
-    # Attribute "member" won't exist if there are no users in the group.
-    if hasattr(group, "member"):
-        return get_users_by_distinguished_name(group.member)
-    else:
-        return User.objects.none()
+    return User.objects.filter(username__in=usernames)
+
 
