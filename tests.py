@@ -24,7 +24,7 @@ class LDAPTestCase(TestCase):
         self.assertEquals(len(results), 1)
 
     def test_get_person_by_username(self):
-        username = "lohrb"
+        username = "dfrost"
         person = self.ldap.get_person_by_username(username)
         self.assertEquals(username, person.sAMAccountName[0])
 
@@ -80,7 +80,7 @@ class UtilsTestCase(TestCase):
 
     def test_django_user_set_for_ldap_group(self):
         # Test a group known to have users.
-        user_set = django_user_set_for_ldap_group("grp.housing.roles.residence-life.resident-director")
+        user_set = django_user_set_for_ldap_group("grp.housing.meal-plan-report")
         self.assertTrue(len(user_set) > 0)
         self.assertTrue(isinstance(user_set[0], User))
 
