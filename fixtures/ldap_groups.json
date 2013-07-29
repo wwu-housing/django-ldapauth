@@ -1,58 +1,446 @@
 [
-    {
-        "pk": 60,
-        "model": "auth.group",
-        "fields": {
-            "name": "grp.housing.roles.residence-life.administrative-assistant",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 65,
-        "model": "auth.group",
-        "fields": {
-            "name": "grp.housing.roles.residence-life.assistant-director",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 61,
-        "model": "auth.group",
-        "fields": {
-            "name": "grp.housing.roles.residence-life.assistant-resident-director",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 77,
-        "model": "auth.group",
-        "fields": {
-            "name": "grp.housing.roles.residence-life.central-office",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 62,
-        "model": "auth.group",
-        "fields": {
-            "name": "grp.housing.roles.residence-life.desk-attendant",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 63,
-        "model": "auth.group",
-        "fields": {
-            "name": "grp.housing.roles.residence-life.resident-advisor",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 64,
-        "model": "auth.group",
-        "fields": {
-            "name": "grp.housing.roles.residence-life.resident-director",
-            "permissions": []
-        }
-    }
+{
+  "pk": 11, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "Central Office Staff", 
+    "permissions": [
+      75, 
+      76, 
+      72, 
+      73, 
+      74, 
+      69, 
+      223, 
+      224, 
+      225
+    ]
+  }
+},
+{
+  "pk": 13, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "Assignments", 
+    "permissions": [
+      251, 
+      252, 
+      133, 
+      134, 
+      440, 
+      441, 
+      442, 
+      266, 
+      267, 
+      431, 
+      432, 
+      433, 
+      428, 
+      429, 
+      430, 
+      683, 
+      684, 
+      685, 
+      301, 
+      302, 
+      303, 
+      136, 
+      137, 
+      138, 
+      139, 
+      140, 
+      141, 
+      245, 
+      246, 
+      278, 
+      279, 
+      319, 
+      320, 
+      321, 
+      656, 
+      657, 
+      658, 
+      659, 
+      660, 
+      661, 
+      662, 
+      663, 
+      664
+    ]
+  }
+},
+{
+  "pk": 30, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "ResTek", 
+    "permissions": []
+  }
+},
+{
+  "pk": 31, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "Conference Services", 
+    "permissions": []
+  }
+},
+{
+  "pk": 33, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "Disability Resources for Students", 
+    "permissions": [
+      440, 
+      441
+    ]
+  }
+},
+{
+  "pk": 35, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.resident-director", 
+    "permissions": [
+      214, 
+      215, 
+      216, 
+      211, 
+      212, 
+      217, 
+      218, 
+      75, 
+      76, 
+      778, 
+      785, 
+      580, 
+      581, 
+      582, 
+      155, 
+      72, 
+      73, 
+      69, 
+      223, 
+      224, 
+      225
+    ]
+  }
+},
+{
+  "pk": 36, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.administrative-assistant", 
+    "permissions": [
+      214, 
+      215, 
+      211, 
+      212, 
+      217, 
+      218, 
+      75, 
+      76, 
+      580, 
+      581, 
+      582, 
+      155, 
+      72, 
+      73, 
+      69, 
+      223, 
+      224, 
+      225
+    ]
+  }
+},
+{
+  "pk": 37, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.desk-attendant", 
+    "permissions": [
+      73, 
+      223
+    ]
+  }
+},
+{
+  "pk": 38, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.resident-advisor", 
+    "permissions": [
+      73, 
+      223
+    ]
+  }
+},
+{
+  "pk": 39, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.central-office", 
+    "permissions": [
+      692, 
+      693, 
+      694, 
+      214, 
+      475, 
+      476, 
+      477, 
+      478, 
+      479, 
+      480, 
+      481, 
+      482, 
+      483, 
+      484, 
+      485, 
+      486, 
+      633, 
+      75, 
+      76, 
+      704, 
+      705, 
+      706, 
+      627, 
+      628, 
+      629, 
+      72, 
+      73, 
+      74, 
+      69, 
+      223, 
+      224, 
+      225
+    ]
+  }
+},
+{
+  "pk": 40, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.manager", 
+    "permissions": []
+  }
+},
+{
+  "pk": 41, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.birnam-wood", 
+    "permissions": [
+      476
+    ]
+  }
+},
+{
+  "pk": 42, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.beta-gamma", 
+    "permissions": [
+      475
+    ]
+  }
+},
+{
+  "pk": 43, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.buchanan-towers", 
+    "permissions": [
+      477
+    ]
+  }
+},
+{
+  "pk": 44, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.edens-higginson", 
+    "permissions": [
+      479
+    ]
+  }
+},
+{
+  "pk": 45, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.fairhaven", 
+    "permissions": [
+      480
+    ]
+  }
+},
+{
+  "pk": 46, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.guest-house-inn", 
+    "permissions": []
+  }
+},
+{
+  "pk": 47, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.kappa", 
+    "permissions": [
+      481
+    ]
+  }
+},
+{
+  "pk": 48, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.mathes", 
+    "permissions": [
+      482
+    ]
+  }
+},
+{
+  "pk": 49, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.nash", 
+    "permissions": [
+      483
+    ]
+  }
+},
+{
+  "pk": 50, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.new-york-apartments", 
+    "permissions": []
+  }
+},
+{
+  "pk": 51, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.communities.shado", 
+    "permissions": [
+      486
+    ]
+  }
+},
+{
+  "pk": 52, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.assistant-resident-director", 
+    "permissions": [
+      214, 
+      215, 
+      211, 
+      212, 
+      217, 
+      218, 
+      75, 
+      76, 
+      580, 
+      581, 
+      582, 
+      155, 
+      72, 
+      73, 
+      69, 
+      223, 
+      224, 
+      225
+    ]
+  }
+},
+{
+  "pk": 55, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.summer-hdr", 
+    "permissions": [
+      456, 
+      455, 
+      461
+    ]
+  }
+},
+{
+  "pk": 56, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.guest-housing.desk-manager", 
+    "permissions": [
+      73, 
+      223
+    ]
+  }
+},
+{
+  "pk": 57, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.guest-housing.resident-director", 
+    "permissions": [
+      72, 
+      73, 
+      69, 
+      223, 
+      224, 
+      225
+    ]
+  }
+},
+{
+  "pk": 58, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.guest-housing.asst-coord", 
+    "permissions": [
+      72, 
+      73, 
+      69, 
+      223, 
+      224, 
+      225
+    ]
+  }
+},
+{
+  "pk": 59, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.guest-housing.conf-serv-asst", 
+    "permissions": [
+      73, 
+      223
+    ]
+  }
+},
+{
+  "pk": 60, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.roles.residence-life.guest-housing.intern", 
+    "permissions": [
+      73, 
+      223
+    ]
+  }
+},
+{
+  "pk": 61, 
+  "model": "auth.group", 
+  "fields": {
+    "name": "grp.housing.meal-plan-report", 
+    "permissions": [
+      735, 
+      736
+    ]
+  }
+}
 ]
