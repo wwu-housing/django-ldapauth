@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from wwu_housing.ldapauth import LDAP
-from utils import django_user_set_for_ldap_group, get_users_by_distinguished_name
+from .utils import django_user_set_for_ldap_group, get_users_by_distinguished_name
 
 
 class LDAPTestCase(TestCase):

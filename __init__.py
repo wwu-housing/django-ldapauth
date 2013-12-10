@@ -10,7 +10,7 @@ import struct
 
 from django.conf import settings
 
-from models import LdapGroup
+from .models import LdapGroup
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +81,7 @@ class LDAPResult(object):
         Returns a display value for this result based on the common name.
         """
         if self.cn is not None:
-            return u"".join(self.cn)
+            return "".join(self.cn)
         else:
             return self.dn
 
@@ -123,7 +123,7 @@ class LDAP(object):
         else:
             self.scope = scope
 
-        if settings.LDAP_SOURCES.has_key(conf_section):
+        if conf_section in settings.LDAP_SOURCES:
             config = settings.LDAP_SOURCES[conf_section]
             self.server = config.get("server")
             self.dn = config.get("dn")
@@ -281,7 +281,7 @@ class LDAP(object):
         depth first search.
         """
 
-        if not isinstance(group, basestring):
+        if not isinstance(group, str):
             raise TypeError
 
         user_list = []
@@ -324,18 +324,18 @@ class LDAP(object):
 if __name__ == "__main__":
     l = LDAP("wwu")
     query = "*webteam*"
-    print "Searching groups for '%s':" % query
+    print("Searching groups for '%s':" % query)
     results = l.search_groups(query)
-    print "Found:"
-    print results
+    print("Found:")
+    print(results)
 
     query = "Firass Asad"
-    print "Searching people for '%s':" % query
+    print("Searching people for '%s':" % query)
     results = l.search_people(query)
-    print "Found:"
-    print results
+    print("Found:")
+    print(results)
 
     username = "lohrb"
-    print "Get person by username: %s" % username
+    print("Get person by username: %s" % username)
     person = l.get_person_by_username(username)
-    print person
+    print(person)

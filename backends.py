@@ -54,7 +54,7 @@ class LDAPBackend(ModelBackend):
                     .order_by()
                 permissions_set.update(set(["%s.%s" % (ct, name)
                                             for ct, name in permissions]))
-        except OPERATIONS_ERROR, e:
+        except OPERATIONS_ERROR as e:
             mail_admins("LDAP Operations Error", "%s" % str(e))
 
         return permissions_set

@@ -5,6 +5,7 @@ import re
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 from wwu_housing.ldapauth import LDAP
+from functools import reduce
 
 
 cn_re = re.compile(r'CN=(.*?),')
@@ -26,7 +27,7 @@ def get_users_by_distinguished_name(distinguished_names):
     queryset for all of those group members.
     """
     # TODO: create Django instances for members who don't have one.
-    members = map(get_common_name, distinguished_names)
+    members = list(map(get_common_name, distinguished_names))
     full_names = set([m for m in members if len(m.split(" ")) == 2])
     user_names = set(members).difference(full_names)
     full_names = [m.split(" ") for m in full_names]
@@ -51,7 +52,7 @@ def django_user_set_for_ldap_group(group):
     `group` can be either a string that is the name of a group, or a Django
     Group model instance.
     """
-    if isinstance(group, basestring):
+    if isinstance(group, str):
         group_name = group
     elif isinstance(group, Group):
         group_name = group.name
