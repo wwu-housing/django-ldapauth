@@ -290,8 +290,9 @@ class LDAP(object):
         result = self.search_groups(group, attributes=['member'])[0]
         visited_objects.append(result.dn)
 
-        for obj in result.member:
-            user_list.extend(self.visit_object(obj, visited_objects))
+        if hasattr(result, "member"):
+            for obj in result.member:
+                user_list.extend(self.visit_object(obj, visited_objects))
         return user_list
 
     def visit_object(self, obj, visited_objects):
