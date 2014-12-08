@@ -127,7 +127,7 @@ class LDAP(object):
             config = settings.LDAP_SOURCES[conf_section]
             self.server = config.get("server")
             self.dn = config.get("dn")
-            self.bindpw = config.get("bindpw")
+            self.bindpw = config.get("PASSWORD")
             self.base = config.get("base")
         else:
             raise Exception("LDAP configuration not found for %s" % conf_section)
